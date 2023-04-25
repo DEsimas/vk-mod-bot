@@ -7,6 +7,9 @@ vk.updates.start().then(() => {
 });
 
 vk.updates.on('message', async (context) => {
+    if ((context.createdAt + 10) * 1000 < Date.now()) return;
+    if (!context.subTypes.includes('message_new')) return;
+    if (context.peerId < 2000000000) return;
     const { items } = await vk.api.messages.getConversationMembers({
         peer_id: context.peerId,
         fields: ['is_owner', 'is_admin'],
@@ -49,7 +52,7 @@ async function notifyUser(context) {
     });
     await vk.api.messages.send({
         user_id: context.senderId,
-        message: 'было удаалено и переслано создателю беседы',
+        message: 'было удалено и переслано создателю беседы',
         random_id: Math.floor(Math.random() * 100000)
     });
 }
